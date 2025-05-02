@@ -2,6 +2,31 @@ package com.db.hierarchicaltorelationaldm;
 
 public class XQueryToSQLTranslator {
 
+    public static String translateInsertQuery(String xquery) throws Exception {
+        // Example XQuery: insert into Employee (Name, Age) values ('Alice', 30)
+
+        if (!xquery.startsWith("insert into")) {
+            throw new Exception("Invalid Insert XQuery format");
+        }
+
+        // Split into main parts
+        String[] intoParts = xquery.split("into");
+        String[] tableAndRest = intoParts[1].trim().split("\\(", 2);
+        String tableName = tableAndRest[0].trim();
+
+        // Extract columns and values
+        String[] columnsAndValues = tableAndRest[1].split("values");
+        String columns = columnsAndValues[0].trim();
+        String values = columnsAndValues[1].trim();
+
+        // Ensure columns and values are properly wrapped with parentheses
+        if (!columns.endsWith(")")) {
+            throw new Exception("Column list must end with ')'");
+        }
+
+        return "INSERT INTO " + tableName + " (" + columns + " VALUES " + values;
+    }
+
     public static String translateReadQuery(String xquery) throws Exception {
         // Example XQuery: for $x in Employee where $x/Age > 30 return $x/Name
 

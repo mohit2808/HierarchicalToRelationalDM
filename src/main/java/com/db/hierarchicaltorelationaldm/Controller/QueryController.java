@@ -15,8 +15,20 @@ public class QueryController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    
+    // 1. INSERT operation
+    @PostMapping("/insert")
+    public ResponseEntity<?> insertData(@RequestBody String xquery) {
+        try {
+            String sql = XQueryToSQLTranslator.translateInsertQuery(xquery);
+            int rowsAffected = jdbcTemplate.update(sql);
+            return ResponseEntity.ok("Insert successful. Rows affected: " + rowsAffected);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error parsing or executing insert query: " + e.getMessage());
+        }
+    }
 
-    // 1. READ Operation
+    // 2. READ Operation
     @PostMapping("/read")
     public ResponseEntity<?> readData(@RequestBody String xquery) {
         try {
@@ -28,7 +40,7 @@ public class QueryController {
         }
     }
 
-    // 2. UPDATE Operation
+    // 3. UPDATE Operation
     @PostMapping("/update")
     public ResponseEntity<?> updateData(@RequestBody String xquery) {
         try {
@@ -40,7 +52,7 @@ public class QueryController {
         }
     }
 
-    // 3. DELETE Operation
+    // 4. DELETE Operation
     @PostMapping("/delete")
     public ResponseEntity<?> deleteData(@RequestBody String xquery) {
         try {
